@@ -9,7 +9,7 @@
 <p><span style="color: #000000;"><strong>WrapItUp</strong></span></p>
 <p><span style="color: #000000;"> </span></p>
 <p><span style="color: #000000;">WrapItUp is an easy-to-use tool that can collect and relink almost all files required to make a Nuke script work on another machine.</span><br /><span style="color: #000000;">It has a user interface if you run it in Nuke, it can be executed from a command-line window for batch operations, and it can be called using a Python function.</span></p>
-<p><span style="color: #000000;">I made sure to cram the entire thing in just one Python file, so you can simply drag-and-drop the file it into Nuke's script editor if you wish to use it just once.<br />To quickly collect all files for a nuke file, simply choose an empty folder in the “collection folder” box at the top of the window and hit Start.</span></p>
+<p><span style="color: #000000;">I made sure to cram the entire thing in just one Python file, so you can simply drag-and-drop the file into Nuke's script editor if you wish to use it just once.<br />To quickly collect all files for a nuke file, simply choose an empty folder in the “collection folder” box at the top of the window and hit Start.</span></p>
 <p> </p>
 <p><span style="color: #000000;">Tested on Windows, Mac OS, and Linux (CentOS).</span></p>
 <p><span style="color: #000000;"> </span></p>
