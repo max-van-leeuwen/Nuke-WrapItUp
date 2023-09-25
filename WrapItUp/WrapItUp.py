@@ -1,11 +1,11 @@
 # Max van Leeuwen - maxvanleeuwen.com/WrapItUp
-# WrapItUp - 1.9
+# WrapItUp - 1.9.1
 #
 # Collect all media, gizmos and files associated with a nuke script, and copy it all to a separate folder - along with a relinked duplicate of the nuke script.
 
 
 
-WIU_Title = 'WrapItUp 1.9 - maxvanleeuwen.com'
+WIU_Title = 'WrapItUp 1.9.1 - maxvanleeuwen.com'
 WIU_Log = '[WrapItUp] '
 
 
@@ -318,7 +318,7 @@ class Ui_Dialog(object):
 	def retranslateUi(self, Dialog):
 		_translate = QtCore.QCoreApplication.translate
 		Dialog.setWindowTitle(_translate("Dialog", "WrapItUp - Max van Leeuwen"))
-		self.ListCopyPaths.setToolTip(_translate("Dialog", "<html><head/><body><p>The found items that will be copied to the specified collection path.</p></body></html>"))
+		self.ListCopyPaths.setToolTip(_translate("Dialog", "<html><head/><body><p>The found items that will be copied to the specified collection path.<br/><br/>An asterisk (*) in front of a media path means that all of its nodes are disabled.</p></body></html>"))
 		self.ListIgnorePaths.setToolTip(_translate("Dialog", "<html><head/><body><p>The found items that will not be copied to the specified collection path.</p></body></html>"))
 		self.SendToIgnore.setToolTip(_translate("Dialog", "Ignore selected items on the left."))
 		self.SendToIgnore.setText(_translate("Dialog", ">>"))
@@ -395,7 +395,7 @@ class Ui_Dialog(object):
 		self.GoToRootFolder.setToolTip(_translate("Dialog", "<html><head/><body><p>Open the currently selected folder.</p></body></html>"))
 		self.GoToRootFolder.setText(_translate("Dialog", "open folder"))
 		self.GoToNode.setToolTip(_translate("Dialog", "<html><head/><body><p>Go to the folder of the currently selected item.<br/><br/>alt/option+shift+r</p></body></html>"))
-		self.GoToNode.setText(_translate("Dialog", "go to node"))
+		self.GoToNode.setText(_translate("Dialog", "go to nodes"))
 
 
 # END OF EMBEDDED UI
@@ -477,7 +477,7 @@ def evalTCL(text):
 
 
 
-def _Start(silent = False, nk = '', startnow = False, out = '', nodenamefolder = True, parentdircount = 3, relinked = True, relativerelinked = True, media = True, fonts = True, gizmos = True, csvcommas = False, licinteractive = False):
+def _Start(silent = False, nk = '', startnow = False, out = '', nodenamefolder = True, parentdircount = 3, relinked = True, relativerelinked = True, media = True, skipdisablednodes = False, fonts = True, gizmos = True, csvcommas = False, licinteractive = False):
 
 	# reset list
 	global WIU_SilentList
@@ -738,6 +738,9 @@ def _Start(silent = False, nk = '', startnow = False, out = '', nodenamefolder =
 		# collect all knobs with files in them
 		iNode = 0
 		for eachNode in nuke.allNodes(recurseGroups=True):
+			if(silent and eachNode.knob('disable')): # only if a 'disable' knob exists on this node
+				if(skipdisablednodes and eachNode['disable'].getValue()): continue # if node is disabled and 'ignore disabled nodes' flag is set (terminal only), skip this node
+			
 			for eachKnob in eachNode.knobs():
 				currKnob = eachNode[eachKnob]
 
@@ -768,24 +771,30 @@ def _Start(silent = False, nk = '', startnow = False, out = '', nodenamefolder =
 						if len(realKnobPaths) > 0:
 							exists = True
 
-						# make media item (node(s), knob(s), file exists, knob value, all paths and sizes per item, total size, is relative from project directory)
-						mediaItem = [[eachNode], [eachKnob], exists, foundPath, allFilesWithSizes, totalSize, projectdir]
+						# check if this node is disabled
+						allNodesDisabled = False
+						if(eachNode.knob('disable')):
+							if(eachNode['disable'].getValue()): allNodesDisabled = True
+
+						# make media item (node(s), knob(s), file exists, knob value, all paths and sizes per item, total size, is relative from project directory, bool if all nodes with this media are disabled)
+						mediaItem = [[eachNode], [eachKnob], exists, foundPath, allFilesWithSizes, totalSize, projectdir, allNodesDisabled]
 						
 						# check if the media item has already been found via another node
-						existingItem = -1
+						existingItem = None
 						i = 0
 						for m in readFiles:
 
-							# remember item index (should happen once at most for each check, so overwriting the previous existingItem is not an issue)
+							# remember item index
 							if m[4] == mediaItem[4] and m[3] == mediaItem[3]:
 								existingItem = i
-							
+								break
 							i += 1
 						
 						# append node and knob to existing item instead of appending the new item
-						if existingItem is not -1:
+						if existingItem is not None:
 							readFiles[existingItem][0].append(eachNode)
 							readFiles[existingItem][1].append(eachKnob)
+							if(readFiles[existingItem][7] and not allNodesDisabled): readFiles[existingItem][7] = False # if previous was disabled and this one isn't, un-disable the node
 
 						# item is new
 						else:
@@ -1179,16 +1188,17 @@ def _Start(silent = False, nk = '', startnow = False, out = '', nodenamefolder =
 
 			# check if the path exists
 			existsBool = dataItem[2]
-			exists = '' if existsBool else 'MISSING: '
+			disabled = '* ' if dataItem[7] else ''
+			exists = '' if existsBool else 'MISSING '
 
 			# make an item for the list
 			nodeName = getNodeNames(dataItem[0])
 			extraTab = '\t' if len(nodeName) < 13 else ''
-			item = exists + nodeName + '\t' + extraTab + dataItem[3] if not silent else exists + nodeName + '\t\t' + extraTab + dataItem[3]
+			item = disabled + exists + nodeName + '\t' + extraTab + dataItem[3] if not silent else exists + nodeName + '\t\t' + extraTab + dataItem[3]
 
 			if not silent:
 
-				# add to the right list
+				# add to the 'to copy' list
 				if(existsBool):
 
 						# add item
@@ -1200,6 +1210,7 @@ def _Start(silent = False, nk = '', startnow = False, out = '', nodenamefolder =
 						# count
 						iCopy += 1
 
+				# add to the 'ignore' list
 				else:
 
 						# add item
@@ -2409,7 +2420,7 @@ def _Start(silent = False, nk = '', startnow = False, out = '', nodenamefolder =
 
 
 # python function start
-def WrapItUp(fromterminal = False, nk = '', startnow = False, out = '', nodenamefolder = True, parentdircount = 3, relinked = True, relativerelinked = True, media = True, fonts = True, gizmos = True, csvcommas = False, licinteractive = False):
+def WrapItUp(fromterminal = False, nk = '', startnow = False, out = '', nodenamefolder = True, parentdircount = 3, relinked = True, relativerelinked = True, media = True, skipdisablednodes = False, fonts = True, gizmos = True, csvcommas = False, licinteractive = False):
 
 	global WIU_AppPath
 
@@ -2473,6 +2484,7 @@ def WrapItUp(fromterminal = False, nk = '', startnow = False, out = '', nodename
 				['Relink\t', relinked],
 				['Relink relative', relativerelinked],
 				['media\t', media],
+				['skipdisablednodes\t', skipdisablednodes],
 				['Fonts\t', fonts],
 				['Gizmo files\t', gizmos],
 				['CSV commas\t', csvcommas],
@@ -2485,7 +2497,7 @@ def WrapItUp(fromterminal = False, nk = '', startnow = False, out = '', nodename
 			print(param)
 
 			# only print preview
-			returnedFiles = _Start(silent, nk, False, out, nodenamefolder, parentdircount, relinked, relativerelinked, media, fonts, gizmos, csvcommas, licinteractive)
+			returnedFiles = _Start(silent, nk, False, out, nodenamefolder, parentdircount, relinked, relativerelinked, media, skipdisablednodes, fonts, gizmos, csvcommas, licinteractive)
 			returnedStr = ''
 			for i in returnedFiles:
 				returnedStr += '\n' + WIU_Log + str(i)
@@ -2500,7 +2512,7 @@ def WrapItUp(fromterminal = False, nk = '', startnow = False, out = '', nodename
 				print('\n' + WIU_Log + 'Starting...' + '\n')
 
 				# begin
-				_Start(silent, nk, startnow, out, nodenamefolder, parentdircount, relinked, relativerelinked, media, fonts, gizmos, csvcommas, licinteractive)
+				_Start(silent, nk, startnow, out, nodenamefolder, parentdircount, relinked, relativerelinked, media, skipdisablednodes, fonts, gizmos, csvcommas, licinteractive)
 
 	
 	# if running with UI in Nuke
@@ -2608,6 +2620,14 @@ if __name__ == "__main__":
 				aMedia = False
 				del c[index]
 				break
+			
+        # skip disabled nodes
+		aSkipDisabledNodes = False
+		for index, arg in enumerate(c):
+			if arg in ['-d']:
+				aSkipDisabledNodes = True
+				del c[index]
+				break
 
 		# fonts
 		aFonts = True
@@ -2641,7 +2661,7 @@ if __name__ == "__main__":
 		if err:
 			print(WIU_Log + 'Usage:\n-nk <nukescript path> (required)\n-o <output folder> (required)\n-s (start now - if not, only a preview list of the files to be processed will be returned)\n-n (disable: place media in node name folder)\n-pd <parent directory count> (default: 3)\n-r (disable: make relinked .nk)\n-rr (disable: make relative relinked .nk)\n-m (disable: collect media)\n-f (disable: collect font folder)\n-g (disable: collect gizmos)\n-csvcomma (use commas instead of semicolons as the CSV separator)')
 		else:
-			WrapItUp(fromterminal = True, nk = aNK, startnow = aStart, out = aOut, nodenamefolder = aNodeName, parentdircount = aDirCount, relinked = aReli, relativerelinked = aReliRela, media = aMedia, fonts = aFonts, gizmos = aGizmos, csvcommas = aCSV, licinteractive = aLicInteractive)
+			WrapItUp(fromterminal = True, nk = aNK, startnow = aStart, out = aOut, nodenamefolder = aNodeName, parentdircount = aDirCount, relinked = aReli, relativerelinked = aReliRela, media = aMedia, skipdisablednodes = aSkipDisabledNodes, fonts = aFonts, gizmos = aGizmos, csvcommas = aCSV, licinteractive = aLicInteractive)
 
 
 	else:
