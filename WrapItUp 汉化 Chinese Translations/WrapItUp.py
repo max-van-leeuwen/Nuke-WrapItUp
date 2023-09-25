@@ -1,12 +1,12 @@
 #encoding=utf-8
 # Max van Leeuwen - maxvanleeuwen.com/WrapItUp
-# WrapItUp - 1.9.1
+# WrapItUp - 2.0
 #
 # Collect all media, gizmos and files associated with a nuke script, and copy it all to a separate folder - along with a relinked duplicate of the nuke script.
 
 
 
-WIU_Title = 'WrapItUp 1.9.1 - maxvanleeuwen.com'
+WIU_Title = 'WrapItUp 2.0 - maxvanleeuwen.com'
 WIU_Log = '[WrapItUp] '
 
 

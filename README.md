@@ -68,7 +68,7 @@
 <p><span style="color: #000000;"> </span></p>
 <p><span style="color: #000000;"><strong>Updates</strong></span></p>
 <p><span style="color: #000000;"> </span></p>
-<p><span style="color: #000000;">1.9.1</span></p>
+<p><span style="color: #000000;">2.0</span></p>
 <p style="margin-left: 30px;"><span style="color: #000000;">Added -d flag in terminal to skip all disabled nodes, and (*) in UI list to show when nodes are disabled</span></p>
 <p style="margin-left: 30px;"><span style="color: #000000;"></span></p>
 <p><span style="color: #000000;">1.9</span></p>
