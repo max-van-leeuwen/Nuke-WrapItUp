@@ -1,11 +1,11 @@
 # Max van Leeuwen - maxvanleeuwen.com/WrapItUp
-# WrapItUp - 2.0
+# WrapItUp - 2.1
 #
 # Collect all media, gizmos and files associated with a nuke script, and copy it all to a separate folder - along with a relinked duplicate of the nuke script.
 
 
 
-WIU_Title = 'WrapItUp 2.0 - maxvanleeuwen.com'
+WIU_Title = 'WrapItUp 2.1 - maxvanleeuwen.com'
 WIU_Log = '[WrapItUp] '
 
 
@@ -1353,7 +1353,16 @@ def _Start(silent = False, nk = '', startnow = False, out = '', nodenamefolder =
 
 		strNodes = ''
 
+		maxNodeCount = 5
+		nodeCount = 0
+
 		for eachNode in nodeList:
+			if(nodeCount >= maxNodeCount and i == 0): # check if there are too many node names
+				strNodes += 'etc' # 'etc' to indicate there were more nodes but the name got too long
+				return strNodes # return right away
+			
+			nodeCount += 1
+
 			strNodes += (eachNode.fullName() if (i <= -5 or i >= 0) else eachNode) + ('_' if us else ' ')
 
 		strNodes = strNodes[:-1]
