@@ -476,7 +476,7 @@ def evalTCL(text):
 		pass
 
 	# only allow string type to be returned
-	if type(val) is not str:
+	if type(val) != str:
 		val = text
 	
 	return val
@@ -667,7 +667,7 @@ def _Start(silent = False, nk = '', startnow = False, out = '', nodenamefolder =
 			splitPath = fullPath.split('/')
 			splitCleanPath = []
 			for s in splitPath:
-				if s is not '':
+				if s != '':
 					splitCleanPath.append(s)
 
 
@@ -755,7 +755,7 @@ def _Start(silent = False, nk = '', startnow = False, out = '', nodenamefolder =
 
 					# only add if a path has been entered
 					foundPath = currKnob.getValue()
-					if foundPath is not '':
+					if foundPath != '':
 
 						# get real paths (file path list + project dir bool)
 						RealKnobPathsResult = GetRealKnobPaths(foundPath)
@@ -906,7 +906,7 @@ def _Start(silent = False, nk = '', startnow = False, out = '', nodenamefolder =
 			gizmoName = isGizmo(eachNode)
 
 			# find gizmo items
-			if gizmoName is not '':
+			if gizmoName != '':
 				gizmoItem = [gizmoName, [eachNode]]
 
 				# check if the gizmo was already found earlier, and if so, append only the node to the already found gizmo item
@@ -1026,7 +1026,7 @@ def _Start(silent = False, nk = '', startnow = False, out = '', nodenamefolder =
 
 
 			# relink nuke script
-			if relinkMethod is not -1:
+			if relinkMethod != -1:
 
 				if silent:
 					print('\n' + WIU_Log + 'Opening temporary Nuke comp in terminal to relink' + (' (relative)' if relinkMethod == 1 else ''))
@@ -1995,7 +1995,7 @@ def _Start(silent = False, nk = '', startnow = False, out = '', nodenamefolder =
 
 			
 			relinkMethod = 0 if f[7] == -2 else (1 if f[7] == -3 else -1) # 0 if relink, 1 if relink relative, -1 if none
-			suffix = ' copy/relink' if relinkMethod is not -1 else '' # suffix for relinked nk scripts
+			suffix = ' copy/relink' if relinkMethod != -1 else '' # suffix for relinked nk scripts
 			labelText = shortenPath(f[0] + suffix, 20) # get shorter path for current copying file, add suffix
 
 			if not silent:
@@ -2141,7 +2141,7 @@ def _Start(silent = False, nk = '', startnow = False, out = '', nodenamefolder =
 
 
 		# exit window when not interrupted by user and exit on finish is enabled
-		if ((isError is not 'USER') and (WExitOnFinish.isChecked())):
+		if ((isError != 'USER') and (WExitOnFinish.isChecked())):
 			
 			# do not ask to save script
 			try:
@@ -2445,7 +2445,7 @@ def WrapItUp(fromterminal = False, nk = '', startnow = False, out = '', nodename
 		WIU_AppPath = nuke.EXE_PATH
 
 	# if run from python function or terminal
-	if out is not '':
+	if out != '':
 
 		# empty line
 		print('')
