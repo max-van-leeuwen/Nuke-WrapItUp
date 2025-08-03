@@ -1,31 +1,37 @@
 # Max van Leeuwen - maxvanleeuwen.com/WrapItUp
-# WrapItUp - 2.1
+# WrapItUp - 2.2
 #
 # Collect all media, gizmos and files associated with a nuke script, and copy it all to a separate folder - along with a relinked duplicate of the nuke script.
 
 
 
-WIU_Title = 'WrapItUp 2.1 - maxvanleeuwen.com'
+WIU_Title = 'WrapItUp 2.2 - maxvanleeuwen.com'
 WIU_Log = '[WrapItUp] '
 
 
 
-# import PySide(2)
+# import PySide
 try:
 
-	# try importing PySide2
-	try:
-		import PySide2.QtCore as QtCore
-		import PySide2.QtGui as QtGui
-		import PySide2.QtWidgets as QtWidgets
+    try:
+        import PySide6.QtCore as QtCore
+        import PySide6.QtGui as QtGui
+        import PySide6.QtWidgets as QtWidgets
+		
+    except:
 
-	# on error, try PySide (with QtGui imported as QtWidgets)
-	except Exception as e:
-		import PySide.QtCore as QtCore
-		import PySide.QtGui as QtGui
-		import PySide.QtGui as QtWidgets
+        # try importing PySide2
+        try:
+            import PySide2.QtCore as QtCore
+            import PySide2.QtGui as QtGui
+            import PySide2.QtWidgets as QtWidgets
 
-
+        # on error, try PySide (with QtGui imported as QtWidgets)
+        except Exception as e:
+            import PySide.QtCore as QtCore
+            import PySide.QtGui as QtGui
+            import PySide.QtGui as QtWidgets
+	
 # ignore if in python shell
 except Exception as e:
 	pass
@@ -96,14 +102,14 @@ class Ui_Dialog(object):
 		self.LCurrItemItemPath.setGeometry(QtCore.QRect(20, 720, 131, 16))
 		font = QtGui.QFont()
 		font.setBold(True)
-		font.setWeight(75)
+		font.setLegacyWeight(75)
 		self.LCurrItemItemPath.setFont(font)
 		self.LCurrItemItemPath.setObjectName("LCurrItemItemPath")
 		self.LPackedItemPath = QtWidgets.QLabel(Dialog)
 		self.LPackedItemPath.setGeometry(QtCore.QRect(20, 740, 131, 16))
 		font = QtGui.QFont()
 		font.setBold(True)
-		font.setWeight(75)
+		font.setLegacyWeight(75)
 		self.LPackedItemPath.setFont(font)
 		self.LPackedItemPath.setObjectName("LPackedItemPath")
 		self.CurrItemPath = QtWidgets.QLabel(Dialog)
@@ -126,7 +132,7 @@ class Ui_Dialog(object):
 		self.LFiles.setGeometry(QtCore.QRect(20, 760, 131, 16))
 		font = QtGui.QFont()
 		font.setBold(True)
-		font.setWeight(75)
+		font.setLegacyWeight(75)
 		self.LFiles.setFont(font)
 		self.LFiles.setObjectName("LFiles")
 		self.CurrItemFiles = QtWidgets.QLabel(Dialog)
@@ -157,7 +163,7 @@ class Ui_Dialog(object):
 		self.LSize.setGeometry(QtCore.QRect(20, 780, 131, 16))
 		font = QtGui.QFont()
 		font.setBold(True)
-		font.setWeight(75)
+		font.setLegacyWeight(75)
 		self.LSize.setFont(font)
 		self.LSize.setObjectName("LSize")
 		self.CurrItemSize = QtWidgets.QLabel(Dialog)
@@ -167,7 +173,7 @@ class Ui_Dialog(object):
 		self.LTotalCopySize.setGeometry(QtCore.QRect(560, 830, 71, 21))
 		font = QtGui.QFont()
 		font.setBold(True)
-		font.setWeight(75)
+		font.setLegacyWeight(75)
 		self.LTotalCopySize.setFont(font)
 		self.LTotalCopySize.setObjectName("LTotalCopySize")
 		self.TotalCopySize = QtWidgets.QLabel(Dialog)
@@ -177,7 +183,7 @@ class Ui_Dialog(object):
 		self.IgnoredLabel.setGeometry(QtCore.QRect(20, 700, 131, 16))
 		font = QtGui.QFont()
 		font.setBold(True)
-		font.setWeight(75)
+		font.setLegacyWeight(75)
 		self.IgnoredLabel.setFont(font)
 		self.IgnoredLabel.setToolTip("")
 		self.IgnoredLabel.setObjectName("IgnoredLabel")

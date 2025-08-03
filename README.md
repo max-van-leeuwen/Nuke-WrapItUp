@@ -64,6 +64,10 @@ If you encounter any issues (or if you have feedback/ideas), [let me know (maxva
 
 ## Updates
 
+### 2.2
+
+- Nuke 16 (PySide 6) compatibility
+
 ### 2.1
 
 - Added maximum of 5 node names in a path when media is reused (to prevent path name length overflow)
