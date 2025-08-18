@@ -64,6 +64,10 @@ If you encounter any issues (or if you have feedback/ideas), [let me know (maxva
 
 ## Updates
 
+### 2.3
+
+- Compatibility issue fixed
+
 ### 2.2
 
 - Nuke 16 (PySide 6) compatibility
